@@ -8,7 +8,7 @@ The migrations can now be invoked by running `luminus-migrations.core/migrate`:
 
 ```clojure
 (ns myapp.db
-  (:requiure [luminus-migrations.core :refer migrate]))
+  (:require [luminus-migrations.core :refer migrate]))
 
 ;;run all outstanding migrations
 (migrate ["migrate"] "<db-url>")
