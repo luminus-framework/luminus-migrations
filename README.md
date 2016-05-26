@@ -10,6 +10,12 @@ The migrations can now be invoked by running `luminus-migrations.core/migrate`:
 (ns myapp.db
   (:require [luminus-migrations.core :refer migrate]))
 
+;;reset the databse
+(migrate ["reset"] "<db-url>")
+
+;;destroy the migration
+(migrate ["destroy" "201506104553"] "<db-url>")
+
 ;;run all outstanding migrations
 (migrate ["migrate"] "<db-url>")
 
