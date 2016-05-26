@@ -10,6 +10,12 @@
   (let [config {:store :database
                 :db {:connection-uri db-url}}]
     (case (first args)
+      "reset"
+      (migratus/reset config)
+      "destroy"
+      (if (= (count args) 1)
+        (migratus/destroy config (first args))
+        (migratus/destroy config))
       "migrate"
       (if (> (count args) 1)
         (apply migratus/up config (parse-ids args))

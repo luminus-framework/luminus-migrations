@@ -1,4 +1,4 @@
-(defproject luminus-migrations "0.1.7"
+(defproject luminus-migrations "0.1.8"
   :description "Luminus migrations"
   :url "https://github.com/luminus-framework/luminus-migrations"
   :license {:name "Eclipse Public License"
