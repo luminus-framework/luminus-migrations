@@ -7,7 +7,14 @@
 (defn parse-ids [args]
   (map #(Long/parseLong %) (rest args)))
 
-(defn migrate [args opts]
+(defn migrate
+  "args - vector of arguments, e.g: [\"migrate\" \"201506104553\"]
+   opts - map of options specifying the database configuration.
+   supported options are:
+   :database-url - URL of the application database
+   :migration-dir - string specifying the directory of the migration files
+   :migration-table-name - string specifying the migration table name"
+  [args opts]
   (let [config (merge
                  {:store :database}
                  (rename-keys opts {:database-url :db}))]
