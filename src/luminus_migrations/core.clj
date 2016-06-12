@@ -1,14 +1,16 @@
 (ns luminus-migrations.core
   (:require
+    [clojure.set :refer [rename-keys]]
     [migratus.core :as migratus]
     [to-jdbc-uri.core :refer [to-jdbc-uri]]))
 
 (defn parse-ids [args]
   (map #(Long/parseLong %) (rest args)))
 
-(defn migrate [args db-url]
-  (let [config {:store :database
-                :db {:connection-uri db-url}}]
+(defn migrate [args opts]
+  (let [config (merge
+                 {:store :database}
+                 (rename-keys opts {:database-url :db}))]
     (case (first args)
       "reset"
       (migratus/reset config)
