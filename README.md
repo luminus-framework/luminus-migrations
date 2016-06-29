@@ -17,6 +17,9 @@ a vector of arguments follows by an options map. The options follow the Migratus
 ;;reset the databse
 (migrate ["reset"] opts)
 
+;;list pending migrations
+(migrate ["pending"] opts)
+
 ;;destroy the migration
 (migrate ["destroy" "201506104553"] opts)
 
