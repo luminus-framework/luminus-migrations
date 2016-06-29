@@ -25,6 +25,8 @@
       (if (= (count args) 1)
         (migratus/destroy config (first args))
         (migratus/destroy config))
+      "pending"
+      (migratus/pending-list config)
       "migrate"
       (if (> (count args) 1)
         (apply migratus/up config (parse-ids args))
