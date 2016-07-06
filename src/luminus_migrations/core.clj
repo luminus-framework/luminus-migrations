@@ -7,6 +7,21 @@
 (defn parse-ids [args]
   (map #(Long/parseLong %) (rest args)))
 
+(defn create
+  "Wrapper around migratus/create.
+   Creates a migration file with generated timestamp-based migration id.
+   name - string, name of migration to be created.
+   opts - map of options specifying the database configuration.
+   supported options are:
+   :database-url - URL of the application database
+   :migration-dir - string specifying the directory of the migration files
+   :migration-table-name - string specifying the migration table name"
+  [name opts]
+  (let [config (merge
+                {:store :database}
+                (rename-keys opts {:database-url :db}))]
+    (migratus/create config name)))
+
 (defn migrate
   "args - vector of arguments, e.g: [\"migrate\" \"201506104553\"]
    opts - map of options specifying the database configuration.
