@@ -20,7 +20,7 @@
   (let [config (merge
                 {:store :database}
                 (rename-keys opts {:database-url :db}))]
-    (migratus/create name config)))
+    (migratus/create config name)))
 
 (defn migrate
   "args - vector of arguments, e.g: [\"migrate\" \"201506104553\"]
