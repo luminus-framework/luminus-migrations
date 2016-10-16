@@ -4,6 +4,11 @@
     [migratus.core :as migratus]
     [to-jdbc-uri.core :refer [to-jdbc-uri]]))
 
+(defn- format-url [opts]
+    (if (:database-url opts)
+      (update opts :database-url to-jdbc-uri)
+      opts))
+
 (defn parse-ids [args]
   (map #(Long/parseLong %) (rest args)))
 
@@ -19,7 +24,7 @@
   [name opts]
   (let [config (merge
                 {:store :database}
-                (rename-keys opts {:database-url :db}))]
+                (-> opts format-url (rename-keys {:database-url :db})))]
     (migratus/create config name)))
 
 (defn migrate
