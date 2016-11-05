@@ -4,13 +4,15 @@
     [migratus.core :as migratus]
     [to-jdbc-uri.core :refer [to-jdbc-uri]]))
 
-(defn- format-url [opts]
-    (if (:database-url opts)
-      (update opts :database-url to-jdbc-uri)
-      opts))
-
 (defn parse-ids [args]
   (map #(Long/parseLong %) (rest args)))
+
+(defn parse-url [{:keys [database-url] :as opts}]
+  (if database-url
+    (-> opts
+        (dissoc :database-url)
+        (assoc-in [:db :connection-uri] (to-jdbc-uri database-url)))
+    opts))
 
 (defn create
   "Wrapper around migratus/create.
@@ -18,13 +20,12 @@
    name - string, name of migration to be created.
    opts - map of options specifying the database configuration.
    supported options are:
+   :db - Migratus db config map
    :database-url - URL of the application database
    :migration-dir - string specifying the directory of the migration files
    :migration-table-name - string specifying the migration table name"
   [name opts]
-  (let [config (merge
-                {:store :database}
-                (-> opts format-url (rename-keys {:database-url :db})))]
+  (let [config (merge {:store :database} (parse-url opts))]
     (migratus/create config name)))
 
 (defn migrate
@@ -35,9 +36,7 @@
    :migration-dir - string specifying the directory of the migration files
    :migration-table-name - string specifying the migration table name"
   [args opts]
-  (let [config (merge
-                 {:store :database}
-                 (rename-keys opts {:database-url :db}))]
+  (let [config (merge {:store :database} (parse-url opts))]
     (case (first args)
       "reset"
       (migratus/reset config)
