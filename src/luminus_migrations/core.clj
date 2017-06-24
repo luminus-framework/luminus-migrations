@@ -14,6 +14,19 @@
         (assoc-in [:db :connection-uri] (to-jdbc-uri database-url)))
     opts))
 
+(defn init
+  "wrapper around migratus/init
+   initializes the database using the script specified by the :init-script key
+   opts - map of options specifying the database configuration.
+   supported options are:
+   :db - Migratus db config map
+   :init-script - SQL script that initialized the database
+   :database-url - URL of the application database
+   :migration-dir - string specifying the directory of the migration files
+   :migration-table-name - string specifying the migration table name"
+  [opts]
+  (migratus/init (parse-url opts)))
+
 (defn create
   "Wrapper around migratus/create.
    Creates a migration file with generated timestamp-based migration id.
