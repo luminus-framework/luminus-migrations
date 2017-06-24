@@ -25,7 +25,8 @@
    :migration-dir - string specifying the directory of the migration files
    :migration-table-name - string specifying the migration table name"
   [opts]
-  (migratus/init (parse-url opts)))
+  (let [config (merge {:store :database} (parse-url opts))]
+    (migratus/init config)))
 
 (defn create
   "Wrapper around migratus/create.
