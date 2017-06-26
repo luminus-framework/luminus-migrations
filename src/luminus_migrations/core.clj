@@ -4,15 +4,22 @@
     [migratus.core :as migratus]
     [to-jdbc-uri.core :refer [to-jdbc-uri]]))
 
-(defn parse-ids [args]
+(defn- parse-ids [args]
   (map #(Long/parseLong %) (rest args)))
 
-(defn parse-url [{:keys [database-url] :as opts}]
-  (if database-url
-    (-> opts
-        (dissoc :database-url)
-        (assoc-in [:db :connection-uri] (to-jdbc-uri database-url)))
-    opts))
+(defn- parse-url
+  ([opts] (parse-url opts identity))
+  ([{:keys [database-url] :as opts} transformation]
+   (if database-url
+     (-> opts
+         (dissoc :database-url)
+         (assoc-in [:db :connection-uri]
+                   (to-jdbc-uri (transformation database-url))))
+     opts)))
+
+(defn- remove-db-name [url]
+  (when url
+    (clojure.string/replace url #"(\/\/.*\/)(.*)(\?)" "$1$3")))
 
 (defn init
   "wrapper around migratus/init
@@ -25,7 +32,7 @@
    :migration-dir - string specifying the directory of the migration files
    :migration-table-name - string specifying the migration table name"
   [opts]
-  (let [config (merge {:store :database} (parse-url opts))]
+  (let [config (merge {:store :database} (parse-url opts remove-db-name))]
     (migratus/init config)))
 
 (defn create
