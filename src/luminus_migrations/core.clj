@@ -62,8 +62,8 @@
       "reset"
       (migratus/reset config)
       "destroy"
-      (if (= (count args) 1)
-        (migratus/destroy config (first args))
+      (if (> (count args) 1)
+        (migratus/destroy config (second args))
         (migratus/destroy config))
       "pending"
       (migratus/pending-list config)
