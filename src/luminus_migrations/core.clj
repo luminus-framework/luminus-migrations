@@ -19,7 +19,7 @@
 
 (defn- remove-db-name [url]
   (when url
-    (clojure.string/replace url #"(\/\/.*\/)(.*)(\?)" "$1$3")))
+    (clojure.string/replace url #"(\/\/.*\/)(.*)(\?)" "$1$2$3")))
 
 (defn init
   "wrapper around migratus/init
