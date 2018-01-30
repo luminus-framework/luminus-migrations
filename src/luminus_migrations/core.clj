@@ -1,6 +1,7 @@
 (ns luminus-migrations.core
   (:require
     [clojure.set :refer [rename-keys]]
+    [clojure.string :refer [join]]
     [migratus.core :as migratus]
     [to-jdbc-uri.core :refer [to-jdbc-uri]]))
 
@@ -20,6 +21,36 @@
 (defn- remove-db-name [url]
   (when url
     (clojure.string/replace url #"(\/\/.*\/)(.*)(\?)" "$1$2$3")))
+
+(def migrations
+  {"reset"
+   (fn [config _]
+     (migratus/reset config))
+
+   "destroy"
+   (fn [config args]
+     (if (> (count args) 1)
+       (migratus/destroy config (second args))
+       (migratus/destroy config)))
+
+   "pending"
+   (fn [config _]
+     (migratus/pending-list config))
+
+   "migrate"
+   (fn [config args]
+     (if (> (count args) 1)
+       (apply migratus/up config (parse-ids args))
+       (migratus/migrate config)))
+
+   "rollback"
+   (fn [config args]
+     (if (> (count args) 1)
+       (apply migratus/down config (parse-ids args))
+       (migratus/rollback config)))})
+
+(defn migration? [[arg]]
+  (contains? (set (keys migrations)) arg))
 
 (defn init
   "wrapper around migratus/init
@@ -57,21 +88,10 @@
    :migration-dir - string specifying the directory of the migration files
    :migration-table-name - string specifying the migration table name"
   [args opts]
+  (when-not (migration? args)
+    (throw
+     (IllegalArgumentException.
+      (str "unrecognized option: " (first args)
+           ", valid options are:" (join ", " (keys migrations))))))
   (let [config (merge {:store :database} (parse-url opts))]
-    (case (first args)
-      "reset"
-      (migratus/reset config)
-      "destroy"
-      (if (> (count args) 1)
-        (migratus/destroy config (second args))
-        (migratus/destroy config))
-      "pending"
-      (migratus/pending-list config)
-      "migrate"
-      (if (> (count args) 1)
-        (apply migratus/up config (parse-ids args))
-        (migratus/migrate config))
-      "rollback"
-      (if (> (count args) 1)
-        (apply migratus/down config (parse-ids args))
-        (migratus/rollback config)))))
+    ((get migrations (first args)) config args)))
