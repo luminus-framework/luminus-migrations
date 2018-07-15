@@ -10,7 +10,7 @@ a vector of arguments follows by an options map. The options follow the Migratus
 
 ```clojure
 (ns myapp.db
-  (:require [luminus-migrations.core :refer migrate]))
+  (:require [luminus-migrations.core :refer [migrate]]))
 
 (def opts {:database-url "<db-url>"})
 
