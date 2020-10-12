@@ -75,10 +75,11 @@
    :db - Migratus db config map
    :database-url - URL of the application database
    :migration-dir - string specifying the directory of the migration files
-   :migration-table-name - string specifying the migration table name"
-  [name opts]
+   :migration-table-name - string specifying the migration table name
+   type - keyword, migration type (e.g. :sql and :edn for code-based migrations)"
+  [name opts & [type]]
   (let [config (merge {:store :database} (parse-url opts))]
-    (migratus/create config name)))
+    (migratus/create config name type)))
 
 (defn migrate
   "args - vector of arguments, e.g: [\"migrate\" \"201506104553\"]
