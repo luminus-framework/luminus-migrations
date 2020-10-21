@@ -3,7 +3,7 @@
     [clojure.set :refer [rename-keys]]
     [clojure.string :refer [join]]
     [migratus.core :as migratus]
-    [to-jdbc-uri.core :refer [to-jdbc-uri]]))
+    [luminus-migrations.util :refer [to-jdbc-uri]]))
 
 (defn- parse-ids [args]
   (map #(Long/parseLong %) (rest args)))
